@@ -16,10 +16,12 @@ public class SeaBearAttacksScript : MonoBehaviour {
 
     public TextMesh[] actions;
     public SpriteRenderer bear;
+    public SpriteRenderer rhinoceros;
 
     private string[] correctActions = new string[] { "Play tuba\nbadly", "Play clarinet\nnicely", "Eat sliced\ncheese", "Eat grated\ncheese", "Wear\nsneakers", "Wear fancy\nshoes", "Take a\nwalk outside", "Go on\nhiking trip", "Drive nails\ninto ground", "Lay on\nground", "Wear sombrero\nin cool fashion", "Wear pants\nin goofy fashion", "Wear\nbubble skirt", "Wear\nhigh skirt", "Howl like\nwolf", "Screech like\nowl", "Walk back\nhome", "Jog around\nneighborhood", "Squeeze into\ntight space", "Do a\nhandstand", "Wave stick\nb&f quickly", "Wave flashlight\nb&f slowly" };
     private string[] incorrectActions = new string[] { "Play clarinet\nbadly", "Eat cubed\ncheese", "Wear\nclown shoes", "Run for\nyour life", "Stomp on\nground", "Wear sombrero\nin goofy fashion", "Wear\nhoop skirt", "Screech like\nchimpanzee", "Limp back\nhome", "Crawl into\ntight space", "Wave flashlight\nb&f quickly" };
     private int correct;
+    private bool specialAttack = false;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -42,6 +44,7 @@ public class SeaBearAttacksScript : MonoBehaviour {
 
     void Start () {
         correct = -1;
+        specialAttack = false;
         bear.enabled = false;
         actions[0].text = "";
         actions[1].text = "";
@@ -79,7 +82,14 @@ public class SeaBearAttacksScript : MonoBehaviour {
                 GetComponent<KMNeedyModule>().HandlePass();
                 Debug.LogFormat("[Sea Bear Attacks #{0}] The action \"{1}\" was incorrect! Strike! Waiting for next activation...", moduleId, actions[Array.IndexOf(buttons, pressed)].text.Replace("\n", " "));
             }
-            bear.enabled = false;
+            correct = -1;
+            if (specialAttack)
+            {
+                rhinoceros.enabled = false;
+                specialAttack = false;
+            }
+            else
+                bear.enabled = false;
             actions[0].text = "";
             actions[1].text = "";
             actions[2].text = "";
@@ -121,9 +131,19 @@ public class SeaBearAttacksScript : MonoBehaviour {
             }
             actions[order[i]].text = i == 0 ? correctActions[choice] : incorrectActions[choice];
         }
-        Debug.LogFormat("[Sea Bear Attacks #{0}] The module has activated! The displayed actions are: \"{1}\", \"{2}\", and \"{3}\"", moduleId, actions[0].text.Replace("\n", " "), actions[1].text.Replace("\n", " "), actions[2].text.Replace("\n", " "));
+        if (UnityEngine.Random.Range(0, 20) == 0)
+        {
+            int rando = UnityEngine.Random.Range(0, 3);
+            correct = rando;
+            actions[rando].characterSize = 60;
+            actions[rando].text = "Wear anti-sea\nrhinoceros\nundergarments";
+            rhinoceros.enabled = true;
+            specialAttack = true;
+        }
+        Debug.LogFormat("[Sea Bear Attacks #{0}] The module has activated! This is a {1} attack and the displayed actions are: \"{2}\", \"{3}\", and \"{4}\"", moduleId, specialAttack ? "sea rhinoceros" : "sea bear", actions[0].text.Replace("\n", " "), actions[1].text.Replace("\n", " "), actions[2].text.Replace("\n", " "));
         Debug.LogFormat("[Sea Bear Attacks #{0}] The correct action is \"{1}\"", moduleId, actions[order[0]].text.Replace("\n", " "));
-        bear.enabled = true;
+        if (!specialAttack)
+            bear.enabled = true;
         moduleActive = true;
     }
 
@@ -134,7 +154,13 @@ public class SeaBearAttacksScript : MonoBehaviour {
         GetComponent<KMNeedyModule>().HandleStrike();
         Debug.LogFormat("[Sea Bear Attacks #{0}] The correct action was not pressed in time! Strike! Waiting for next activation...", moduleId);
         correct = -1;
-        bear.enabled = false;
+        if (specialAttack)
+        {
+            rhinoceros.enabled = false;
+            specialAttack = false;
+        }
+        else
+            bear.enabled = false;
         actions[0].text = "";
         actions[1].text = "";
         actions[2].text = "";

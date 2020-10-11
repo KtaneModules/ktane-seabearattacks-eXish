@@ -23,11 +23,11 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Sea%20Bear%20Attacks.pdf
 
 
-    Sea Bear Attacks (seaBearAttacksModule) v1.0.1
+    Sea Bear Attacks (seaBearAttacksModule) v1.0.2
 
     Module and Concept by eXish
 
     Twitch Plays supported'
-  version: 1.0.1
+  version: 1.0.2
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 2358b30ecbd51b348998b894c952d558, type: 3}
